@@ -2,12 +2,18 @@ spring:
   datasource:
     username: sa
     password:
-    url:
+    url: jdbc:h2:tcp://localhost/~/miniproject
     driver-class-name: org.h2.Driver
+
+  # 스크립트 기반 데이터베이스 초기화를 실행시키는 코드
+  # always: 완전 초기화 | never: 초기화 막기
+  sql:
+    init:
+      mode: always
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
