@@ -18,6 +18,7 @@ CREATE TABLE member
     asset        VARCHAR(255),
     salary       VARCHAR(255),
     age          VARCHAR(255),
+    is_not_first TINYINT DEFAULT 0,
     PRIMARY KEY (member_id)
 );
 
