@@ -16,6 +16,8 @@ public class Product {
     @Id
     @Column(name = "PRODUCT_ID")
     private Long id;
+
+    @Column
     private String companyName;
     private String productName;
     private String price;
@@ -27,9 +29,4 @@ public class Product {
 
     @Embedded
     private AdditionalInfo additionalInfo;
-
-    public Product(Long id, String companyName) {
-        this.id = id;
-        this.companyName = companyName;
-    }
 }
