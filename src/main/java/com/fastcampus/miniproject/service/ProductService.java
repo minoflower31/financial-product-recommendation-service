@@ -1,10 +1,7 @@
 package com.fastcampus.miniproject.service;
 
 import com.fastcampus.miniproject.dto.*;
-import com.fastcampus.miniproject.dto.response.ProductDetailResponse;
-import com.fastcampus.miniproject.dto.response.ProductListCustomizedResponse;
-import com.fastcampus.miniproject.dto.response.ProductListWisdomResponse;
-import com.fastcampus.miniproject.dto.response.ProductResponse;
+import com.fastcampus.miniproject.dto.response.*;
 import com.fastcampus.miniproject.entity.Product;
 import com.fastcampus.miniproject.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +64,12 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         return new ProductListWisdomResponse(cards, memberships);
+    }
+
+    public ProductSimpleResponse findByDto(Long productId) {
+        return productRepository.findById(productId)
+                .map(ProductSimpleResponse::new)
+                .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
     }
 
     Product findById(Long id) {
