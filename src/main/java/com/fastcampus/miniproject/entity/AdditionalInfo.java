@@ -3,12 +3,14 @@ package com.fastcampus.miniproject.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class AdditionalInfo {
 
     private String job;
@@ -27,5 +29,15 @@ public class AdditionalInfo {
         this.asset = asset;
         this.salary = salary;
         this.age = age;
+    }
+
+    public void changeAll(AdditionalInfo info) {
+        this.job = info.job;
+        this.interest = info.interest;
+        this.realEstate = info.realEstate;
+        this.car = info.car;
+        this.asset = info.asset;
+        this.salary = info.salary;
+        this.age = info.age;
     }
 }

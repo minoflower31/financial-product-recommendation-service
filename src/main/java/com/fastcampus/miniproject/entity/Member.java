@@ -52,14 +52,13 @@ public class Member {
         return new AdditionalInfo(UNSPECIFIED, UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED);
     }
 
-
     //Spring Security를 위한 role 메서드
     public void addRole(Role role) {
         this.role = role;
     }
 
     public void changeAdditionalInfo(String job, List<String> interest, String realEstate, String car, String asset, String salary, String age) {
-        additionalInfo = new AdditionalInfo(job, StringUtils.join(interest, '|'), realEstate, car, asset, salary, age);
+        additionalInfo.changeAll(new AdditionalInfo(job, StringUtils.join(interest, '|'), realEstate, car, asset, salary, age));
     }
 
     public void changePassword(String password) {
