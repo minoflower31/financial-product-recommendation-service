@@ -7,7 +7,9 @@ import java.util.List;
 @Data
 public class UpdateMemberRequest {
 
+    private String name;
     private String password;
+    private String phoneNumber;
     private String job;
     private List<String> interest;
     private String realEstate;

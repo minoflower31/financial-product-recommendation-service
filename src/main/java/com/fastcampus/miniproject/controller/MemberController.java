@@ -45,8 +45,8 @@ public class MemberController {
 
     @PatchMapping("/members")
     //@ApiOperation(value = "회원 정보 수정", notes = "회원의 패스워드와 세부정보를 수정할 수 있다.")
-    public ResponseWrapper<Void> updatePasswordAdditionalInfo(@RequestBody UpdateMemberRequest request,@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        memberService.updatePassword(principalDetails.getMember().getId(), request);
+    public ResponseWrapper<Void> updateMember(@RequestBody UpdateMemberRequest request,@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        memberService.updateJoinInfo(principalDetails.getMember().getId(), request);
         memberService.updateAdditionalInfo(principalDetails.getMember().getId(), request);
         return new ResponseWrapper<Void>().ok();
     }
