@@ -23,10 +23,13 @@ public class Member {
 
     private String loginId;
     private String password;
+
+    @Column(name = "USERNAME")
     private String name;
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "ROLES")
     private Role role;
 
     @Embedded
@@ -64,5 +67,13 @@ public class Member {
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePhoneNumber(String phoneNumber) {
+        this.password = phoneNumber;
     }
 }
