@@ -1,6 +1,7 @@
 package com.fastcampus.miniproject.controller;
 
 import com.fastcampus.miniproject.dto.ResponseWrapper;
+import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
 import com.fastcampus.miniproject.dto.request.MemberDetailRequest;
 import com.fastcampus.miniproject.dto.request.UpdateMemberRequest;
 import com.fastcampus.miniproject.dto.response.GetMemberResponse;
@@ -16,6 +17,13 @@ public class MemberController {
     private final MemberService memberService;
 
     private static Long MEMBER_ID = 1L;
+
+    @PostMapping("/join")
+    public ResponseWrapper<Void> join(@RequestBody JoinMemberRequest joinMemberRequest) {
+        System.out.println(joinMemberRequest);
+        memberService.joinMember(joinMemberRequest);
+        return new ResponseWrapper<Void>().ok();
+    }
 
     @PostMapping("/join/detail")
     //@ApiOperation(value = "세부정보 입력", notes = "회원이 세부정보를 입력한다.")
