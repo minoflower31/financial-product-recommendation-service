@@ -37,14 +37,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om = new ObjectMapper();
             LoginMemberRequest loginIdAndPassword = om.readValue(request.getInputStream(), LoginMemberRequest.class);
 
-
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginIdAndPassword.getEmail(), loginIdAndPassword.getPassword());
             log.debug("[JwtAuthenticationFilter.class] - authenticationToken 값 : {}", authenticationToken);
 
             // PrincipalDetailsService 의 loadUserByUsername() 함수가 실행됨
             // authentication 에 내 로그인 정보가 담긴다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
             System.out.println(principalDetails.getMember().getLoginId());
             // authentication 객체가 session 영역에 저장됨 ==> 로그인이 되었다는 뜻
