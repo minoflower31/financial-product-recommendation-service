@@ -10,17 +10,26 @@ spring:
   sql:
     init:
       mode: always
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+# 스프링 2.5 이상의 버전부터 data.sql 스크립트는 Hibernate 가 초기화되기 전에 실행된다.
+# data.sql 을 사용하여 Hibernate 에 의해 생성된 스키마를 채우려면
+# spring.jpa.defer-datasource-initialization 을 true 로 설정
+    defer-datasource-initialization: true
 
 logging:
   level:
     org.hibernate.SQL: debug
+jwt:
+  header: Authorization
+  secret: c2VjcmV0LWtleS1GYXN0Y2FtcHVzLW1pbmktcHJvamVjdC1Gcm9udGVuZC1CYWNrZW5kLXRlYW0tY29uYW4td2Utd2lsLWRvLWl0
+  token-validity-in-seconds: 86400
