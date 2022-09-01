@@ -1,6 +1,7 @@
 package com.fastcampus.miniproject.controller;
 
 import com.fastcampus.miniproject.dto.*;
+import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
 import com.fastcampus.miniproject.dto.response.ProductDetailResponse;
 import com.fastcampus.miniproject.dto.response.ProductListCustomizedResponse;
 import com.fastcampus.miniproject.dto.response.ProductListWisdomResponse;
@@ -21,17 +22,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public ResponseWrapper<List<ProductResponse>> getProductList() {
-        return new ResponseWrapper<>(productService.getProductList()).ok();
-    }
-
-    @GetMapping(value = "/products", params = {"query", "tag", "tagContent"})
-    public ResponseWrapper<List<ProductResponse>> getProductListWithQuery(
-            @RequestParam String query,
-            @RequestParam String tag,
-            @RequestParam String tagContent) {
-
-        return new ResponseWrapper<>(productService.getProductList(query, tag, tagContent)).ok();
+    public ResponseWrapper<List<ProductResponse>> getProductList(ProductSearchRequest productSearchRequest) {
+        return new ResponseWrapper<>(productService.getProductList(productSearchRequest)).ok();
     }
 
     @GetMapping("/products/{id}")
