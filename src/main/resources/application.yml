@@ -1,15 +1,16 @@
 spring:
+  # 스크립트 기반 데이터베이스 초기화를 실행시키는 코드
+  # always: 완전 초기화 | never: 초기화 막기
+  sql:
+    init:
+      mode: always
+
   datasource:
     username: sa
     password:
     url: jdbc:h2:tcp://localhost/~/miniproject
     driver-class-name: org.h2.Driver
 
-  # 스크립트 기반 데이터베이스 초기화를 실행시키는 코드
-  # always: 완전 초기화 | never: 초기화 막기
-  sql:
-    init:
-      mode: always
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -20,6 +21,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    # MySQL용 DDL 쿼리를 확인하기 위함
+    # database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 logging:
   level:
