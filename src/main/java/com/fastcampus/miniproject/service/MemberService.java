@@ -42,11 +42,16 @@ public class MemberService {
     }
 
     @Transactional
-    public void updatePassword(Long memberId, UpdateMemberRequest request) {
-        if (request.getPassword() == null)
-            return;
+    public void updateJoinInfo(Long memberId, UpdateMemberRequest request) {
+        Member member = findById(memberId);
+        if (request.getPassword() != null)
+            member.changePassword(request.getPassword());
 
-        findById(memberId).changePassword(request.getPassword());
+        if(request.getName() != null)
+            member.changeName(request.getName());
+
+        if(request.getPhoneNumber() != null)
+            member.changePhoneNumber(request.getPhoneNumber());
     }
 
     @Transactional
