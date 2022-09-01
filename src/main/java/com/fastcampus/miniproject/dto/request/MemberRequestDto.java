@@ -2,19 +2,18 @@ package com.fastcampus.miniproject.dto.request;
 
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.enums.Authority;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Data
-public class JoinMemberRequest {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class MemberRequestDto {
     private String email;
     private String password;
-    private String name;
-    private String phoneNumber;
-
-    public Member toMember() {
-        return new Member(email, password, name, phoneNumber);
-    }
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
@@ -22,5 +21,9 @@ public class JoinMemberRequest {
                 .password(passwordEncoder.encode(password))
                 .authority(Authority.ROLE_USER)
                 .build();
+    }
+
+    public UsernamePasswordAuthenticationToken toAuthentication() {
+        return new UsernamePasswordAuthenticationToken(email, password);
     }
 }

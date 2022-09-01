@@ -1,7 +1,8 @@
 package com.fastcampus.miniproject.entity;
 
-import com.fastcampus.miniproject.enums.Role;
+import com.fastcampus.miniproject.enums.Authority;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.buf.StringUtils;
@@ -27,7 +28,7 @@ public class Member {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Authority authority;
 
     @Embedded
     private AdditionalInfo additionalInfo;
@@ -44,8 +45,15 @@ public class Member {
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.role = Role.USER;
+        this.authority = Authority.ROLE_USER;
         this.additionalInfo = defaultAdditionalInfo();
+
+    }
+    @Builder
+    public Member(String loginId, String password, Authority authority) {
+        this.loginId = loginId;
+        this.password = password;
+        this.authority = authority;
     }
 
     //상세 정보
@@ -54,8 +62,8 @@ public class Member {
     }
 
     //Spring Security를 위한 role 메서드
-    public void addRole(Role role) {
-        this.role = role;
+    public void addRole(Authority authority) {
+        this.authority = authority;
     }
 
     public void changeAdditionalInfo(String job, List<String> interest, String realEstate, String car, String asset, String salary, String age) {
