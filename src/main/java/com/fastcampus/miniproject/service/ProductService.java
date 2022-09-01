@@ -1,9 +1,11 @@
 package com.fastcampus.miniproject.service;
 
+import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
 import com.fastcampus.miniproject.dto.*;
 import com.fastcampus.miniproject.dto.response.*;
 import com.fastcampus.miniproject.entity.Product;
 import com.fastcampus.miniproject.repository.ProductRepository;
+import com.fastcampus.miniproject.repository.ProductRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +22,11 @@ import static com.fastcampus.miniproject.enums.Tag.*;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductRepositoryImpl queryRepository;
 
-    public List<ProductResponse> getProductList() {
-        return productRepository.findAll().stream()
-                .map(ProductResponse::new)
-                .toList();
-    }
-
-    public List<ProductResponse> getProductList(String query, String tag, String tagContent) {
-
-        return productRepository.findAll().stream()
+    public List<ProductResponse> getProductList(ProductSearchRequest productSearchRequest) {
+        return queryRepository.findBySearchCond(productSearchRequest)
+                .stream()
                 .map(ProductResponse::new)
                 .toList();
     }
