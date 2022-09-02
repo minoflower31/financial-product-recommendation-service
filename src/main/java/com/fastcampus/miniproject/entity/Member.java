@@ -54,9 +54,11 @@ public class Member {
     }
 
     @Builder
-    public Member(String loginId, String password, Authority authority) {
+    public Member(String loginId, String password, String name, String phoneNumber, Authority authority) {
         this.loginId = loginId;
         this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
         this.authority = authority;
         this.isNotFirst = false;
         this.additionalInfo = defaultAdditionalInfo();

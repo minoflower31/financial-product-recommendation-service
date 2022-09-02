@@ -12,14 +12,12 @@ public class JoinMemberRequest {
     private String name;
     private String phoneNumber;
 
-    public Member toMember() {
-        return new Member(email, password, name, phoneNumber);
-    }
-
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .loginId(email)
                 .password(passwordEncoder.encode(password))
+                .name(name)
+                .phoneNumber(phoneNumber)
                 .authority(Authority.ROLE_USER)
                 .build();
     }
