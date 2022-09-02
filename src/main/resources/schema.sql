@@ -2,6 +2,7 @@ DROP TABLE if EXISTS cart CASCADE;
 DROP TABLE if EXISTS concern_product CASCADE;
 DROP TABLE if EXISTS member CASCADE;
 DROP TABLE if EXISTS product CASCADE;
+DROP TABLE if EXISTS refresh_token CASCADE;
 
 CREATE TABLE member
 (
@@ -57,6 +58,13 @@ CREATE TABLE cart
     member_id  BIGINT,
     product_id BIGINT,
     PRIMARY KEY (cart_id)
+);
+
+CREATE TABLE REFRESH_TOKEN
+(
+    rt_key VARCHAR(255) NOT NULL,
+    rt_value VARCHAR(255),
+    PRIMARY KEY (rt_key)
 );
 
 ALTER TABLE cart
