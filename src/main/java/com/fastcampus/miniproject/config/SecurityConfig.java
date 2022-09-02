@@ -1,97 +1,68 @@
 package com.fastcampus.miniproject.config;
 
-import com.fastcampus.miniproject.config.auth.jwt.JwtAuthenticationFilter;
-import com.fastcampus.miniproject.config.auth.jwt.JwtAuthorizationFilter;
-import com.fastcampus.miniproject.config.filter.LoginSuccessHandler;
-import com.fastcampus.miniproject.repository.MemberRepository;
+import com.fastcampus.miniproject.config.auth.JwtAccessDeniedHandler;
+import com.fastcampus.miniproject.config.auth.JwtAuthenticationEntryPoint;
+import com.fastcampus.miniproject.config.auth.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final MemberRepository memberRepository;
-    private final CorsFilter corsFilter;
+    private final TokenProvider tokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new LoginSuccessHandler();
+    // h2 database 테스트가 원활하도록 관련 API 들은 전부 무시
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/h2-console/**", "/favicon.ico")
+                .antMatchers("/v2/api-docs", "/webjars/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter = new UsernamePasswordAuthenticationFilter();
-//        usernamePasswordAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
-//        usernamePasswordAuthenticationFilter.setUsernameParameter("email");
-//        usernamePasswordAuthenticationFilter.setPasswordParameter("password");
-//        usernamePasswordAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-//        http.addFilter(usernamePasswordAuthenticationFilter);
+        // CSRF 설정 Disable
+        http.csrf().disable()
 
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // exception handling 할 때 우리가 만든 클래스를 추가
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+
+                // h2-console 을 위한 설정을 추가
                 .and()
-                .csrf()
-                .disable().authorizeRequests()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+
+                // 시큐리티는 기본적으로 세션을 사용
+                // 여기서는 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .and()
-                .httpBasic()
-                .disable()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))   // 필터에 다시 등록    // AuthenticationManager 을 보내줘야함
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
+                .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**"
-                        , "/"
-                        , "/v2/api-docs"
-                        , "/swagger-ui/index.html"
-                        , "/swagger-resources/**"
-                        , "/swagger-ui.html"
-                        , "/swagger/**"
-                        , "/webjars/**"
-                        , "/h2-console/**"
-                        , "/favicon.ico"
-                ).permitAll()
-                .anyRequest()
-                .permitAll()
-                .and()
-                .addFilter(corsFilter)
-                .formLogin()
-                .loginProcessingUrl("/login")
-                .usernameParameter("email")
-                .successForwardUrl("/login")
-                .successHandler(authenticationSuccessHandler())
-                .permitAll();
-        //        http.csrf().disable();
-//        http.authorizeRequests()
-//                .antMatchers("/api/v1/auth/**"
-//                        , "/"
-//                        , "/v2/api-docs"
-//                        , "/swagger-resources/**"
-//                        , "/swagger-ui/index.html"
-//                        , "/swagger-ui.html"
-//                        , "/webjars/**"
-//                        , "/swagger/**"
-//                        , "/h2-console/**"
-//                        , "/favicon.ico"
-//                ).permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .loginProcessingUrl("/login")
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .permitAll();
+                .antMatchers("/login", "/join", "/reissue").permitAll()
+                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
+                // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
+                .and()
+                .apply(new JwtSecurityConfig(tokenProvider));
     }
 }
