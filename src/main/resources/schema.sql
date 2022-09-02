@@ -10,7 +10,7 @@ CREATE TABLE member
     password     VARCHAR(255),
     username     VARCHAR(255),
     phone_number VARCHAR(255),
-    roles        VARCHAR(255),
+    authority    VARCHAR(255),
     job          VARCHAR(255),
     interest     VARCHAR(255),
     real_estate  VARCHAR(255),

@@ -34,6 +34,8 @@ public class Member {
     @Embedded
     private AdditionalInfo additionalInfo;
 
+    private Boolean isNotFirst;
+
     //로그인
     public Member(String loginId, String password) {
         this.loginId = loginId;
@@ -47,6 +49,7 @@ public class Member {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.authority = Authority.ROLE_USER;
+        this.isNotFirst = false;
         this.additionalInfo = defaultAdditionalInfo();
 
     }
