@@ -60,7 +60,7 @@ CREATE TABLE cart
     PRIMARY KEY (cart_id)
 );
 
-CREATE TABLE REFRESH_TOKEN
+CREATE TABLE refresh_token
 (
     rt_key VARCHAR(255) NOT NULL,
     rt_value VARCHAR(255),
