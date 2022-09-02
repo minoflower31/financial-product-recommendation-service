@@ -51,13 +51,15 @@ public class Member {
         this.authority = Authority.ROLE_USER;
         this.isNotFirst = false;
         this.additionalInfo = defaultAdditionalInfo();
-
     }
+
     @Builder
     public Member(String loginId, String password, Authority authority) {
         this.loginId = loginId;
         this.password = password;
         this.authority = authority;
+        this.isNotFirst = false;
+        this.additionalInfo = defaultAdditionalInfo();
     }
 
     //상세 정보
