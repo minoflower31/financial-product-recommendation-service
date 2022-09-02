@@ -89,4 +89,8 @@ public class Member {
     public void changePhoneNumber(String phoneNumber) {
         this.password = phoneNumber;
     }
+
+    public void changeIsNotFirst(Boolean isNotFirst) {
+        this.isNotFirst = isNotFirst;
+    }
 }
