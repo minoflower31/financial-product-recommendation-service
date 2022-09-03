@@ -37,7 +37,7 @@ public class AuthService {
         Member member = joinMemberRequest.toMember(passwordEncoder);
         MemberResponseDto.of(memberRepository.save(member));
     }
-    // TODO 확인
+
     @Transactional
     public MemberAndTokenResponseDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -100,6 +100,24 @@ public class AuthService {
 
         // 토큰 발급
         return memberAndTokenResponseDto;
+    }
+
+    @Transactional
+    public void logout(TokenRequestDto tokenRequestDto) {
+        // 1. Access Token 검증
+        if (!tokenProvider.validateToken(tokenRequestDto.getAccessToken())) {
+            throw new RuntimeException("Access Token 이 유효하지 않습니다.");
+        }
+
+        // 2. Access Token 에서 Member ID 가져오기
+        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+
+        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("이미 로그아웃 된 사용자입니다."));
+
+        // Refresh Token 삭제
+        refreshTokenRepository.delete(refreshToken);
     }
 
     private MemberAndTokenResponseDto getMemberAndTokenResponseDto(Authentication authentication, TokenDto tokenDto) {

@@ -7,10 +7,7 @@ import com.fastcampus.miniproject.dto.request.TokenRequestDto;
 import com.fastcampus.miniproject.dto.response.MemberAndTokenResponseDto;
 import com.fastcampus.miniproject.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,8 +26,8 @@ public class AuthController {
      *         "phoneNumber" :
      *     }
      * </pre>
-     * @param joinMemberRequest 기본 회원 정보
-     * @return 상태코드
+     * @param joinMemberRequest 기본 회원 정보 (email, password, name, phoneNumber)
+     * @return 응답객체
      */
     @PostMapping("/join")
     public ResponseWrapper<Void> join(@RequestBody JoinMemberRequest joinMemberRequest) {
@@ -47,8 +44,8 @@ public class AuthController {
      *         "password" :
      *     }
      * </pre>
-     * @param memberRequestDto 로그인 회원 정보
-     * @return 상태코드
+     * @param memberRequestDto 로그인 회원 정보 (email, password)
+     * @return 응답객체
      */
     @PostMapping("/login")
     public ResponseWrapper<MemberAndTokenResponseDto> login(@RequestBody MemberRequestDto memberRequestDto) {
@@ -65,14 +62,25 @@ public class AuthController {
      *     }
      * </pre>
      * @param tokenRequestDto
-     * @return
+     * @return 응답객체
      */
     @PostMapping("/reissue")
     public ResponseWrapper<MemberAndTokenResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return new ResponseWrapper<>(authService.reissue(tokenRequestDto)).ok();
     }
-    @GetMapping("/logout")
-    public ResponseWrapper<Void> logout() {
+
+    /**
+     * <p> 로그아웃 기능 </p>
+     * <pre>
+     *
+     * </pre>
+     * @param tokenRequestDto
+     * @return
+     */
+//    @PostMapping(value="/logout")
+    @DeleteMapping("/logout")
+    public ResponseWrapper<Void> logout(@RequestBody TokenRequestDto tokenRequestDto) {
+        authService.logout(tokenRequestDto);
         return new ResponseWrapper<Void>().ok();
     }
 }
