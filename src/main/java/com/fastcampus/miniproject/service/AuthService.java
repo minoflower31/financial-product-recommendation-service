@@ -6,6 +6,7 @@ import com.fastcampus.miniproject.dto.TokenDto;
 import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
 import com.fastcampus.miniproject.dto.request.MemberRequestDto;
 import com.fastcampus.miniproject.dto.request.TokenRequestDto;
+import com.fastcampus.miniproject.dto.response.MemberAndTokenResponseDto;
 import com.fastcampus.miniproject.dto.response.MemberResponseDto;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.entity.RefreshToken;
@@ -29,16 +30,16 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public MemberResponseDto join(JoinMemberRequest joinMemberRequest) {
+    public void join(JoinMemberRequest joinMemberRequest) {
         if (memberRepository.existsByLoginId(joinMemberRequest.getEmail())) {
             throw new JoinException("이미 가입되어 있는 유저입니다");
         }
         Member member = joinMemberRequest.toMember(passwordEncoder);
-        return MemberResponseDto.of(memberRepository.save(member));
+        MemberResponseDto.of(memberRepository.save(member));
     }
 
     @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto) {
+    public MemberAndTokenResponseDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
 
@@ -49,7 +50,15 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 4. RefreshToken 저장
+        // 4.LoginResponseDto 생성
+        String name = authentication.getName();
+        long id = Long.parseLong(name);
+
+        Member member = memberRepository.findById(id).orElseThrow();
+
+        MemberAndTokenResponseDto memberAndTokenResponseDto = MemberAndTokenResponseDto.builder().member(member).tokenDto(tokenDto).build();
+
+        // 5. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
@@ -57,11 +66,11 @@ public class AuthService {
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
-        return tokenDto;
+        return memberAndTokenResponseDto;
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public MemberAndTokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -82,11 +91,42 @@ public class AuthService {
         // 5. 새로운 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 6. 저장소 정보 업데이트
+        // 6.LoginResponseDto 생성
+        MemberAndTokenResponseDto memberAndTokenResponseDto = getMemberAndTokenResponseDto(authentication, tokenDto);
+
+        // 7. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급
-        return tokenDto;
+        return memberAndTokenResponseDto;
+    }
+
+    @Transactional
+    public void logout(TokenRequestDto tokenRequestDto) {
+        // 1. Access Token 검증
+        if (!tokenProvider.validateToken(tokenRequestDto.getAccessToken())) {
+            throw new RuntimeException("Access Token 이 유효하지 않습니다.");
+        }
+
+        // 2. Access Token 에서 Member ID 가져오기
+        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+
+        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("이미 로그아웃 된 사용자입니다."));
+
+        // Refresh Token 삭제
+        refreshTokenRepository.delete(refreshToken);
+    }
+
+    private MemberAndTokenResponseDto getMemberAndTokenResponseDto(Authentication authentication, TokenDto tokenDto) {
+        String name = authentication.getName();
+        long id = Long.parseLong(name);
+
+        Member member = memberRepository.findById(id).orElseThrow();
+
+        MemberAndTokenResponseDto memberAndTokenResponseDto = MemberAndTokenResponseDto.builder().member(member).tokenDto(tokenDto).build();
+        return memberAndTokenResponseDto;
     }
 }
