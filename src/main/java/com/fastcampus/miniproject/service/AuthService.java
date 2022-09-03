@@ -6,6 +6,7 @@ import com.fastcampus.miniproject.dto.TokenDto;
 import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
 import com.fastcampus.miniproject.dto.request.MemberRequestDto;
 import com.fastcampus.miniproject.dto.request.TokenRequestDto;
+import com.fastcampus.miniproject.dto.response.LoginResponseDto;
 import com.fastcampus.miniproject.dto.response.MemberResponseDto;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.entity.RefreshToken;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -29,16 +32,16 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public MemberResponseDto join(JoinMemberRequest joinMemberRequest) {
+    public void join(JoinMemberRequest joinMemberRequest) {
         if (memberRepository.existsByLoginId(joinMemberRequest.getEmail())) {
             throw new JoinException("이미 가입되어 있는 유저입니다");
         }
         Member member = joinMemberRequest.toMember(passwordEncoder);
-        return MemberResponseDto.of(memberRepository.save(member));
+        MemberResponseDto.of(memberRepository.save(member));
     }
-
+    // TODO 확인
     @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto) {
+    public LoginResponseDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
 
@@ -49,7 +52,16 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 4. RefreshToken 저장
+        // 4.LoginResponseDto 생성
+        String name = authentication.getName();
+        long id = Long.parseLong(name);
+
+        Member member = memberRepository.findById(id).orElseThrow();
+
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder().member(member).tokenDto(tokenDto).build();
+        System.out.println("loginResponseDto 확인 : " + loginResponseDto);
+
+        // 5. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
@@ -57,7 +69,7 @@ public class AuthService {
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
-        return tokenDto;
+        return loginResponseDto;
     }
 
     @Transactional
