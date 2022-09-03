@@ -23,6 +23,8 @@ public class MemberService {
     @Transactional
     public void inputDetails(Long memberId, MemberDetailRequest request) {
         Member member = findById(memberId);
+
+        updateIsNotFirst(member.getId());
         member.changeAdditionalInfo(
                 request.getJob(),
                 request.getInterest(),
@@ -59,6 +61,12 @@ public class MemberService {
                 (request.getAsset() == null) ? info.getAsset() : request.getAsset(),
                 (request.getSalary() == null) ? info.getSalary() : request.getSalary(),
                 (request.getAge() == null) ? info.getAge() : request.getAge());
+    }
+
+    @Transactional
+    public void updateIsNotFirst(Long memberId) {
+        Member member = findById(memberId);
+        member.changeIsNotFirst(true);
     }
 
     public GetMemberResponse getMember(Long memberId) {

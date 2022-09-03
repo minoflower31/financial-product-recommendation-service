@@ -1,5 +1,6 @@
 package com.fastcampus.miniproject.controller;
 
+import com.fastcampus.miniproject.config.util.SecurityUtil;
 import com.fastcampus.miniproject.dto.*;
 import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
 import com.fastcampus.miniproject.dto.response.ProductDetailResponse;
@@ -11,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,12 +37,12 @@ public class ProductController {
     @GetMapping("/products/customized")
     @ApiOperation(value = "맞춤형 상품 목록", notes = "사용자에게 추천할 맞춤형 상품(대출, 적금, 펀드) 목록을 조회한다.")
     public ResponseWrapper<ProductListCustomizedResponse> getCustomizedProductList() {
-        return new ResponseWrapper<>(productService.getProductListCustomized()).ok();
+        return new ResponseWrapper<>(productService.getProductListCustomized(SecurityUtil.getCurrentMemberId())).ok();
     }
 
     @GetMapping("/products/wisdom")
     @ApiOperation(value = "현명한 소비 목록", notes = "사용자에게 추천할 현명한 소비 상품(카드, 멤버십) 목록을 조회한다.")
     public ResponseWrapper<ProductListWisdomResponse> getWisdomProductList() {
-        return new ResponseWrapper<>(productService.getProductListWisdom()).ok();
+        return new ResponseWrapper<>(productService.getProductListWisdom(SecurityUtil.getCurrentMemberId())).ok();
     }
 }

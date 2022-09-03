@@ -1,8 +1,10 @@
 package com.fastcampus.miniproject.service;
 
+import com.fastcampus.miniproject.dto.ProductCustomizedDto;
+import com.fastcampus.miniproject.dto.ProductWisdomDto;
 import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
-import com.fastcampus.miniproject.dto.*;
 import com.fastcampus.miniproject.dto.response.*;
+import com.fastcampus.miniproject.entity.AdditionalInfo;
 import com.fastcampus.miniproject.entity.Product;
 import com.fastcampus.miniproject.repository.ProductRepository;
 import com.fastcampus.miniproject.repository.ProductRepositoryImpl;
@@ -23,40 +25,50 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductRepositoryImpl queryRepository;
+    private final MemberService memberService;
 
     public List<ProductResponse> getProductList(ProductSearchRequest productSearchRequest) {
+
+        if (productSearchRequest.isFieldsNull()) {
+            return productRepository.findAll()
+                    .stream()
+                    .map(ProductResponse::new)
+                    .collect(Collectors.toList());
+        }
         return queryRepository.findBySearchCond(productSearchRequest)
                 .stream()
                 .map(ProductResponse::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public ProductDetailResponse getProduct(Long productId) {
         return new ProductDetailResponse(findById(productId));
     }
 
-    public ProductListCustomizedResponse getProductListCustomized() {
-        List<ProductCustomizedDto> loan = productRepository.findAllByTag(LOAN.getValue()).stream()
-                .map(ProductCustomizedDto::new)
-                .toList();
+    public ProductListCustomizedResponse getProductListCustomized(Long memberId) {
 
-        List<ProductCustomizedDto> fund = productRepository.findAllByTag(FUND.getValue()).stream()
-                .map(ProductCustomizedDto::new)
-                .toList();
+        AdditionalInfo additionalInfo = memberService.findById(memberId)
+                .getAdditionalInfo();
 
-        List<ProductCustomizedDto> savings = productRepository.findAllByTag(SAVING.getValue()).stream()
-                .map(ProductCustomizedDto::new)
-                .toList();
+        List<ProductCustomizedDto> loan = mapToDto(queryRepository.findCustomizedList(LOAN, additionalInfo));
+        List<ProductCustomizedDto> fund = mapToDto(queryRepository.findCustomizedList(FUND, additionalInfo));
+        List<ProductCustomizedDto> savings = mapToDto(queryRepository.findCustomizedList(SAVING, additionalInfo));
 
         return new ProductListCustomizedResponse(loan, fund, savings);
     }
 
-    public ProductListWisdomResponse getProductListWisdom() {
-        List<ProductWisdomDto> cards = productRepository.findAllByTag(CARD.getValue()).stream()
+    public ProductListWisdomResponse getProductListWisdom(Long memberId) {
+
+        AdditionalInfo additionalInfo = memberService.findById(memberId)
+                .getAdditionalInfo();
+
+        List<ProductWisdomDto> cards = queryRepository.findWisdomList(CARD, additionalInfo)
+                .stream()
                 .map(ProductWisdomDto::new)
                 .toList();
 
-        List<ProductWisdomDto> memberships = productRepository.findAllByTag(SAVING.getValue()).stream()
+        List<ProductWisdomDto> memberships = queryRepository.findWisdomList(SAVING, additionalInfo)
+                .stream()
                 .map(ProductWisdomDto::new)
                 .collect(Collectors.toList());
 
@@ -71,5 +83,12 @@ public class ProductService {
 
     Product findById(Long id) {
         return productRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
+    private List<ProductCustomizedDto> mapToDto(List<Product> productList) {
+        return productList
+                .stream()
+                .map(ProductCustomizedDto::new)
+                .toList();
     }
 }

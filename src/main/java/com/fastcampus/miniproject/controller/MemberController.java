@@ -30,6 +30,7 @@ public class MemberController {
     @GetMapping("/join/detail-skip")
     @ApiOperation(value = "세부정보 입력할 때 건너띄기", notes = "세부정보를 입력하지 않고 건너띄기 버튼을 클릭했을 때 호출된다.")
     public ResponseWrapper<Void> inputDetailsSkip() {
+        memberService.updateIsNotFirst(SecurityUtil.getCurrentMemberId());
 
         return new ResponseWrapper<Void>().noContent();
     }
