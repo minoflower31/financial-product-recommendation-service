@@ -8,7 +8,7 @@ import lombok.Data;
 
 
 @Data
-public class LoginResponseDto {
+public class MemberAndTokenResponseDto {
     private String email;
     private String name;
     private String phoneNumber;
@@ -17,7 +17,7 @@ public class LoginResponseDto {
     private String refreshToken;
 
     @Builder
-    public LoginResponseDto(Member member, TokenDto tokenDto) {
+    public MemberAndTokenResponseDto(Member member, TokenDto tokenDto) {
         this.email = member.getLoginId();
         this.name = member.getName();
         this.phoneNumber = member.getPhoneNumber();

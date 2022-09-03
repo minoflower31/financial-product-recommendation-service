@@ -6,7 +6,7 @@ import com.fastcampus.miniproject.dto.TokenDto;
 import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
 import com.fastcampus.miniproject.dto.request.MemberRequestDto;
 import com.fastcampus.miniproject.dto.request.TokenRequestDto;
-import com.fastcampus.miniproject.dto.response.LoginResponseDto;
+import com.fastcampus.miniproject.dto.response.MemberAndTokenResponseDto;
 import com.fastcampus.miniproject.dto.response.MemberResponseDto;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.entity.RefreshToken;
@@ -19,8 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +39,7 @@ public class AuthService {
     }
     // TODO 확인
     @Transactional
-    public LoginResponseDto login(MemberRequestDto memberRequestDto) {
+    public MemberAndTokenResponseDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
 
@@ -58,8 +56,7 @@ public class AuthService {
 
         Member member = memberRepository.findById(id).orElseThrow();
 
-        LoginResponseDto loginResponseDto = LoginResponseDto.builder().member(member).tokenDto(tokenDto).build();
-        System.out.println("loginResponseDto 확인 : " + loginResponseDto);
+        MemberAndTokenResponseDto memberAndTokenResponseDto = MemberAndTokenResponseDto.builder().member(member).tokenDto(tokenDto).build();
 
         // 5. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
@@ -69,11 +66,11 @@ public class AuthService {
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
-        return loginResponseDto;
+        return memberAndTokenResponseDto;
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public MemberAndTokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -94,11 +91,24 @@ public class AuthService {
         // 5. 새로운 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 6. 저장소 정보 업데이트
+        // 6.LoginResponseDto 생성
+        MemberAndTokenResponseDto memberAndTokenResponseDto = getMemberAndTokenResponseDto(authentication, tokenDto);
+
+        // 7. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급
-        return tokenDto;
+        return memberAndTokenResponseDto;
+    }
+
+    private MemberAndTokenResponseDto getMemberAndTokenResponseDto(Authentication authentication, TokenDto tokenDto) {
+        String name = authentication.getName();
+        long id = Long.parseLong(name);
+
+        Member member = memberRepository.findById(id).orElseThrow();
+
+        MemberAndTokenResponseDto memberAndTokenResponseDto = MemberAndTokenResponseDto.builder().member(member).tokenDto(tokenDto).build();
+        return memberAndTokenResponseDto;
     }
 }

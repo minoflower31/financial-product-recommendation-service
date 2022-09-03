@@ -1,11 +1,10 @@
 package com.fastcampus.miniproject.controller;
 
 import com.fastcampus.miniproject.dto.ResponseWrapper;
-import com.fastcampus.miniproject.dto.TokenDto;
 import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
 import com.fastcampus.miniproject.dto.request.MemberRequestDto;
 import com.fastcampus.miniproject.dto.request.TokenRequestDto;
-import com.fastcampus.miniproject.dto.response.LoginResponseDto;
+import com.fastcampus.miniproject.dto.response.MemberAndTokenResponseDto;
 import com.fastcampus.miniproject.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,12 +51,12 @@ public class AuthController {
      * @return 상태코드
      */
     @PostMapping("/login")
-    public ResponseWrapper<LoginResponseDto> login(@RequestBody MemberRequestDto memberRequestDto) {
+    public ResponseWrapper<MemberAndTokenResponseDto> login(@RequestBody MemberRequestDto memberRequestDto) {
         return new ResponseWrapper<>(authService.login(memberRequestDto)).ok();
     }
 
     /**
-     * <p>인증 토큰 재발급</p>
+     * <p>인증 토큰 재발급 및 회원정보 </p>
      * <p>[input data]</p>
      * <pre>
      *     {
@@ -69,10 +68,9 @@ public class AuthController {
      * @return
      */
     @PostMapping("/reissue")
-    public ResponseWrapper<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+    public ResponseWrapper<MemberAndTokenResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return new ResponseWrapper<>(authService.reissue(tokenRequestDto)).ok();
     }
-    // TODO 로그아웃 기능 추가
     @GetMapping("/logout")
     public ResponseWrapper<Void> logout() {
         return new ResponseWrapper<Void>().ok();
