@@ -10,7 +10,7 @@ public class ProductResponse {
 
     private Long id;
     private String tag;
-    private List<String> details;
+    private String description;
     private String logo;
     private String companyName;
     private String productName;
@@ -19,7 +19,7 @@ public class ProductResponse {
     public ProductResponse(Product product) {
         id = product.getId();
         tag = product.getTag();
-        details = List.of(product.getDetails().split("\\|"));
+        description = product.getDescription();
         logo = product.getLogo();
         companyName = product.getCompanyName();
         productName = product.getProductName();
