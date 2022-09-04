@@ -12,9 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -22,7 +19,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,9 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
-        http.httpBasic().disable()
-                .cors().configurationSource(corsConfigurationSource());
         http.csrf().disable()
+
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -71,19 +66,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .apply(new JwtSecurityConfig(tokenProvider));
-    }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addExposedHeader("Authorization");
-        corsConfiguration.addExposedHeader("refreshToken");
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
     }
 }
