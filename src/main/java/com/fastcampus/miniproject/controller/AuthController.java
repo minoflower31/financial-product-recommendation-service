@@ -61,7 +61,7 @@ public class AuthController {
      *         "refreshToken" :
      *     }
      * </pre>
-     * @param tokenRequestDto (accessToken, refreshToken)
+     * @param tokenRequestDto
      * @return 응답객체
      */
     @PostMapping("/reissue")
@@ -71,7 +71,9 @@ public class AuthController {
 
     /**
      * <p> 로그아웃 기능 </p>
-     * <pre></pre>
+     * <pre>
+     *
+     * </pre>
      * @param tokenRequestDto
      * @return
      */
