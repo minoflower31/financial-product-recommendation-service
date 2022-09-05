@@ -38,6 +38,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs", "/webjars/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**");
     }
 
+    /**
+     *
+     * CORS issue 해결
+     * 이유: Cors는 기본적으로 preFlight(Http Methods: OPTIONS)로 미리 요청을 보낸 후에 이에 대한 응답으로
+     * 헤더의 Access Control Allow Origin(우리 코드에서는 addAllowedOriginPattern)을 확인하고 본 요청(e.g. GET, POST 등)을 보낸다.
+     * 그래서 .authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll() 로 모든 PreFlight 요청에 대해 허용하고,
+     * .cors().configurationSource(corsConfigurationSource())을 통해 헤더 설정이 포함된 Cors 관련 Bean을 넣으면 된다.
+     *
+     * @param http the {@link HttpSecurity} to modify
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
@@ -82,10 +93,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowCredentials(true);   // 내 서버가 응답을 할 때 JSON 을 자바스크립트에서 처리할 수 있게 할지 설정
+        corsConfiguration.addAllowedOriginPattern("*");   // 모든 IP 에 응답을 허용
+        corsConfiguration.addAllowedHeader("*");   // 모든 header 에 응답 허용
+        corsConfiguration.addAllowedMethod("*");   // 모든 메서드 요청을 허용
         corsConfiguration.addExposedHeader("Authorization");
         corsConfiguration.addExposedHeader("refreshToken");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
