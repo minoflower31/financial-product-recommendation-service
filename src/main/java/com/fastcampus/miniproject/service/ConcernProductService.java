@@ -1,7 +1,6 @@
 package com.fastcampus.miniproject.service;
 
-import com.fastcampus.miniproject.dto.response.ProductResponse;
-import com.fastcampus.miniproject.dto.response.ProductSimpleResponse;
+import com.fastcampus.miniproject.dto.response.ProductResponseDto;
 import com.fastcampus.miniproject.entity.ConcernProduct;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.entity.Product;
@@ -19,10 +18,10 @@ public class ConcernProductService {
     private final ConcernProductRepository concernProductRepository;
     private final MemberService memberService;
     private final ProductService productService;
-    public List<ProductResponse> findAllById(Long memberId) {
+    public List<ProductResponseDto.Product> findAllById(Long memberId) {
         return concernProductRepository.findByMemberId(memberId)
                 .stream()
-                .map(c -> new ProductResponse(c.getProduct()))
+                .map(c -> new ProductResponseDto.Product(c.getProduct()))
                 .toList();
     }
 
@@ -36,8 +35,8 @@ public class ConcernProductService {
         concernProductRepository.save(concernProduct);
     }
 
-    public ProductSimpleResponse findById(Long id) {
-        return new ProductSimpleResponse(productService.findById(id));
+    public ProductResponseDto.ProductSimple findById(Long id) {
+        return new ProductResponseDto.ProductSimple(productService.findById(id));
     }
 
     @Transactional

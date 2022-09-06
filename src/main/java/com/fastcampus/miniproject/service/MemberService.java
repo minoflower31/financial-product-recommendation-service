@@ -1,8 +1,7 @@
 package com.fastcampus.miniproject.service;
 
-import com.fastcampus.miniproject.dto.request.MemberDetailRequest;
-import com.fastcampus.miniproject.dto.request.UpdateMemberRequest;
-import com.fastcampus.miniproject.dto.response.GetMemberResponse;
+import com.fastcampus.miniproject.dto.request.UserRequestDto;
+import com.fastcampus.miniproject.dto.response.MemberResponseDto;
 import com.fastcampus.miniproject.entity.AdditionalInfo;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.repository.MemberRepository;
@@ -21,7 +20,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void inputDetails(Long memberId, MemberDetailRequest request) {
+    public void inputDetails(Long memberId, UserRequestDto.MemberDetail request) {
         Member member = findById(memberId);
 
         updateIsNotFirst(member.getId());
@@ -36,7 +35,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateJoinInfo(Long memberId, UpdateMemberRequest request) {
+    public void updateJoinInfo(Long memberId, UserRequestDto.UpdateMember request) {
         Member member = findById(memberId);
         if (request.getPassword() != null)
             member.changePassword(request.getPassword());
@@ -49,7 +48,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateAdditionalInfo(Long memberId, UpdateMemberRequest request) {
+    public void updateAdditionalInfo(Long memberId, UserRequestDto.UpdateMember request) {
         Member member = findById(memberId);
         AdditionalInfo info = member.getAdditionalInfo();
 
@@ -69,9 +68,9 @@ public class MemberService {
         member.changeIsNotFirst(true);
     }
 
-    public GetMemberResponse getMember(Long memberId) {
+    public MemberResponseDto.GetMember getMember(Long memberId) {
         Member member = findById(memberId);
-        return new GetMemberResponse(member.getName(), member.getAdditionalInfo());
+        return new MemberResponseDto.GetMember(member.getName(), member.getAdditionalInfo());
     }
 
     Member findById(Long memberId) {

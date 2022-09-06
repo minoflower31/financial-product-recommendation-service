@@ -1,6 +1,6 @@
 package com.fastcampus.miniproject.service;
 
-import com.fastcampus.miniproject.dto.response.ProductResponse;
+import com.fastcampus.miniproject.dto.response.ProductResponseDto;
 import com.fastcampus.miniproject.entity.Cart;
 import com.fastcampus.miniproject.entity.Member;
 import com.fastcampus.miniproject.entity.Product;
@@ -33,11 +33,11 @@ public class CartService {
         //memberId = 1, productId = 1; CartId = 4 ;
     }
 
-    public List<ProductResponse> findMemberId(Long memberId){
+    public List<ProductResponseDto.Product> findMemberId(Long memberId){
 
         return cartRepository.findByMemberId(memberId)
                 .stream()
-                .map(c -> new ProductResponse(c.getProduct()))
+                .map(c -> new ProductResponseDto.Product(c.getProduct()))
                 .toList();
     }
 
