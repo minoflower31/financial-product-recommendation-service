@@ -1,17 +1,38 @@
 spring:
+  # 스크립트 기반 데이터베이스 초기화를 실행시키는 코드
+  # always: 완전 초기화 | never: 초기화 막기
+  sql:
+    init:
+      mode: always
+
   datasource:
     username: sa
     password:
-    url:
+    url: jdbc:h2:tcp://localhost/~/miniproject
     driver-class-name: org.h2.Driver
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
+    # MySQL용 DDL 쿼리를 확인하기 위함
+    # database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    defer-datasource-initialization: true
+    # 스프링 2.5 이상의 버전부터 data.sql 스크립트는 Hibernate 가 초기화되기 전에 실행된다.
+    # data.sql 을 사용하여 Hibernate 에 의해 생성된 스키마를 채우려면
+    # spring.jpa.defer-datasource-initialization 을 true 로 설정
 
 logging:
   level:
     org.hibernate.SQL: debug
+jwt:
+  header: Authorization
+  secret: c2VjcmV0LWtleS1GYXN0Y2FtcHVzLW1pbmktcHJvamVjdC1Gcm9udGVuZC1CYWNrZW5kLXRlYW0tY29uYW4td2Utd2lsLWRvLWl0
+  token-validity-in-seconds: 86400
