@@ -14,6 +14,4 @@ public interface ConcernProductRepository extends JpaRepository<ConcernProduct, 
     List<ConcernProduct> findByMemberId(@Param("memberId") Long memberId);
 
     Optional<ConcernProduct> findByMemberIdAndProductId(Long memberId, Long ProductId);
-
 }
-

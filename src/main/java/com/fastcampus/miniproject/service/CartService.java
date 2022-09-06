@@ -30,7 +30,6 @@ public class CartService {
     }
 
     public List<ProductResponse> findMemberId(Long memberId){
-
         return cartRepository.findByMemberId(memberId)
                 .stream()
                 .map(c -> new ProductResponse(c.getProduct()))
@@ -44,5 +43,4 @@ public class CartService {
 
         cartRepository.delete(target);
     }
-
 }

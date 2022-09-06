@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login", "/join", "/reissue", "/logout","/products").permitAll()
-                .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
+                .anyRequest().authenticated()
                 .and()
                 .logout()
                 .disable()

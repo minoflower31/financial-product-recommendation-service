@@ -116,7 +116,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         });
     }
 
-
     private BooleanBuilder nameEq(String query) {
 
         return safeForNullValues(() -> {
@@ -127,6 +126,4 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             return booleanBuilder;
         });
     }
-
-
 }

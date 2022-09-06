@@ -27,7 +27,6 @@ public class ConcernProductController {
     @PostMapping("/products/concern")
     @ApiOperation(value = "관심상품 등록", notes = "관심상품을 등록한다.")
     public ResponseWrapper<ProductSimpleResponse> register(@RequestBody ConcernProductRequest request) {
-
         concernProductService.register(request.getId(), SecurityUtil.getCurrentMemberId());
 
         return new ResponseWrapper<>(concernProductService.findById(request.getId())).ok();

@@ -47,5 +47,4 @@ public class ConcernProductService {
 
         concernProductRepository.delete(concernProduct);
     }
-
 }

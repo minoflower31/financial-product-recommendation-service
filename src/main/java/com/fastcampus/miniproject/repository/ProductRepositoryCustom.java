@@ -10,7 +10,8 @@ import java.util.List;
 public interface ProductRepositoryCustom {
 
     List<Product> findBySearchCond(ProductSearchRequest productSearchRequest);
-    List<Product> findCustomizedList(Tag tag, AdditionalInfo additionalInfo);
-    List<Product> findWisdomList(Tag tag, AdditionalInfo additionalInfo);
 
+    List<Product> findCustomizedList(Tag tag, AdditionalInfo additionalInfo);
+
+    List<Product> findWisdomList(Tag tag, AdditionalInfo additionalInfo);
 }

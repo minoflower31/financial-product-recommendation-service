@@ -36,13 +36,11 @@ public class Member {
 
     private Boolean isNotFirst;
 
-    //로그인
     public Member(String loginId, String password) {
         this.loginId = loginId;
         this.password = password;
     }
 
-    //회원가입
     public Member(String loginId, String password, String name, String phoneNumber) {
         this.loginId = loginId;
         this.password = password;
@@ -64,12 +62,10 @@ public class Member {
         this.additionalInfo = defaultAdditionalInfo();
     }
 
-    //상세 정보
     AdditionalInfo defaultAdditionalInfo() {
         return new AdditionalInfo(UNSPECIFIED, UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED,UNSPECIFIED);
     }
 
-    //Spring Security를 위한 role 메서드
     public void addRole(Authority authority) {
         this.authority = authority;
     }

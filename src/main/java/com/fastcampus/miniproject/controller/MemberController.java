@@ -18,9 +18,7 @@ public class MemberController {
 
     @PostMapping("/join/detail")
     @ApiOperation(value = "세부정보 입력", notes = "회원이 세부정보를 입력한다.")
-    //@ApiOperation(value = "세부정보 입력", notes = "회원이 세부정보를 입력한다.")
     public ResponseWrapper<Void> inputDetails(@RequestBody MemberDetailRequest request) {
-
         memberService.inputDetails(SecurityUtil.getCurrentMemberId(), request);
 
         return new ResponseWrapper<Void>()
@@ -37,20 +35,15 @@ public class MemberController {
 
     @GetMapping("/members")
     @ApiOperation(value = "회원 정보 상세", notes = "회원의 이름과 세부정보를 입력한 데이터가 조회된다.")
-    //@ApiOperation(value = "회원 정보 상세", notes = "회원의 이름과 세부정보를 입력한 데이터가 조회된다.")
     public ResponseWrapper<GetMemberResponse> getMember() {
-
         return new ResponseWrapper<>(memberService.getMember(SecurityUtil.getCurrentMemberId()))
                 .ok();
     }
 
     @PatchMapping("/members")
     @ApiOperation(value = "회원 정보 수정", notes = "회원의 패스워드와 세부정보를 수정할 수 있다.")
-    //@ApiOperation(value = "회원 정보 수정", notes = "회원의 패스워드와 세부정보를 수정할 수 있다.")
     public ResponseWrapper<Void> updatePasswordAdditionalInfo(@RequestBody UpdateMemberRequest request) {
-        
         memberService.updateJoinInfo(SecurityUtil.getCurrentMemberId(), request);
-
         memberService.updateAdditionalInfo(SecurityUtil.getCurrentMemberId(), request);
 
         return new ResponseWrapper<Void>()

@@ -30,7 +30,6 @@ public class CartController {
     @PostMapping("/members/cart")
     @ApiOperation(value = "장바구니 등록", notes = "장바구니를 등록한다.")
     public ResponseWrapper<ProductSimpleResponse> add(@RequestBody CartRequest request) {
-
         cartService.add(request.getId(), SecurityUtil.getCurrentMemberId());
 
         return new ResponseWrapper<>(productService.findByDto(request.getId()))
@@ -40,7 +39,6 @@ public class CartController {
     @DeleteMapping("/members/cart")
     @ApiOperation(value = "장바구니 삭제", notes = "장바구니를 삭제한다.")
     public ResponseWrapper<ProductSimpleResponse> delete(@RequestBody CartRequest request){
-
         cartService.delete(request.getId(), SecurityUtil.getCurrentMemberId());
 
         return new ResponseWrapper<>(productService.findByDto(request.getId())).ok();
