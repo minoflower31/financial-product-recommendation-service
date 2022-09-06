@@ -24,13 +24,12 @@ import java.util.List;
 public class SwaggerConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //spring-security 와 연결할 때 이 부분을 작성하지 않으면 404에러가 뜬다.
         registry.addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
-        // -- Static resources
+
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css");
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");

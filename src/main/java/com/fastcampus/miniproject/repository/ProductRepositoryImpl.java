@@ -22,9 +22,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     private final JPAQueryFactory qf;
 
-    /**
-     * 검색 조건이 없을 경우, 성능 최적화를 위해 table search 쿼리를 제대로 짜야함.
-     */
     @Override
     public List<Product> findBySearchCond(ProductSearchRequest condition) {
 

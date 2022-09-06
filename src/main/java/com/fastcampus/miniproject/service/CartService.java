@@ -27,10 +27,6 @@ public class CartService {
 
         Cart cart = new Cart(member, product);
         cartRepository.save(cart);
-        //memberId = 1, productId = 3; CartId = 1
-        //memberId = 1, productId = 4; CartId = 2;
-        //memberId = 1, productId = 5; CartId = 3;
-        //memberId = 1, productId = 1; CartId = 4 ;
     }
 
     public List<ProductResponse> findMemberId(Long memberId){
