@@ -80,7 +80,7 @@ public class AuthController {
      * @param token (accessToken, refreshToken)
      * @return
      */
-    @DeleteMapping("/logout")
+    @PostMapping("/logout")
     public ResponseWrapper<Void> logout(@RequestBody UserRequestDto.Token token) {
         authService.logout(token);
         return new ResponseWrapper<Void>().ok();

@@ -68,10 +68,10 @@ public class ProductService {
                 .map(ProductWisdomDto::new)
                 .toList();
 
-        List<ProductWisdomDto> memberships = queryRepository.findWisdomList(SAVING, additionalInfo)
+        List<ProductWisdomDto> memberships = queryRepository.findWisdomList(MEMBERSHIP, additionalInfo)
                 .stream()
                 .map(ProductWisdomDto::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return new ProductResponseDto.ProductListWisdom(cards, memberships);
     }
