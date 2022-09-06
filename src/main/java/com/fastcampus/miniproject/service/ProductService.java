@@ -2,8 +2,9 @@ package com.fastcampus.miniproject.service;
 
 import com.fastcampus.miniproject.dto.ProductCustomizedDto;
 import com.fastcampus.miniproject.dto.ProductWisdomDto;
-import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
-import com.fastcampus.miniproject.dto.response.*;
+import com.fastcampus.miniproject.dto.request.ProductRequestDto;
+import com.fastcampus.miniproject.dto.response.MemberResponseDto;
+import com.fastcampus.miniproject.dto.response.ProductResponseDto;
 import com.fastcampus.miniproject.entity.AdditionalInfo;
 import com.fastcampus.miniproject.entity.Product;
 import com.fastcampus.miniproject.repository.ProductRepository;
@@ -27,25 +28,25 @@ public class ProductService {
     private final ProductRepositoryImpl queryRepository;
     private final MemberService memberService;
 
-    public List<ProductResponse> getProductList(ProductSearchRequest productSearchRequest) {
+    public List<ProductResponseDto.Product> getProductList(ProductRequestDto.ProductSearch productSearchRequest) {
 
         if (productSearchRequest.isFieldsNull()) {
             return productRepository.findAll()
                     .stream()
-                    .map(ProductResponse::new)
+                    .map(ProductResponseDto.Product::new)
                     .collect(Collectors.toList());
         }
         return queryRepository.findBySearchCond(productSearchRequest)
                 .stream()
-                .map(ProductResponse::new)
+                .map(ProductResponseDto.Product::new)
                 .collect(Collectors.toList());
     }
 
-    public ProductDetailResponse getProduct(Long productId) {
-        return new ProductDetailResponse(findById(productId));
+    public MemberResponseDto.ProductDetail getProduct(Long productId) {
+        return new MemberResponseDto.ProductDetail(findById(productId));
     }
 
-    public ProductListCustomizedResponse getProductListCustomized(Long memberId) {
+    public ProductResponseDto.ProductListCustom getProductListCustomized(Long memberId) {
 
         AdditionalInfo additionalInfo = memberService.findById(memberId)
                 .getAdditionalInfo();
@@ -54,10 +55,10 @@ public class ProductService {
         List<ProductCustomizedDto> fund = mapToDto(queryRepository.findCustomizedList(FUND, additionalInfo));
         List<ProductCustomizedDto> savings = mapToDto(queryRepository.findCustomizedList(SAVING, additionalInfo));
 
-        return new ProductListCustomizedResponse(loan, fund, savings);
+        return new ProductResponseDto.ProductListCustom(loan, fund, savings);
     }
 
-    public ProductListWisdomResponse getProductListWisdom(Long memberId) {
+    public ProductResponseDto.ProductListWisdom getProductListWisdom(Long memberId) {
 
         AdditionalInfo additionalInfo = memberService.findById(memberId)
                 .getAdditionalInfo();
@@ -72,12 +73,12 @@ public class ProductService {
                 .map(ProductWisdomDto::new)
                 .collect(Collectors.toList());
 
-        return new ProductListWisdomResponse(cards, memberships);
+        return new ProductResponseDto.ProductListWisdom(cards, memberships);
     }
 
-    public ProductSimpleResponse findByDto(Long productId) {
+    public ProductResponseDto.ProductSimple findByDto(Long productId) {
         return productRepository.findById(productId)
-                .map(ProductSimpleResponse::new)
+                .map(ProductResponseDto.ProductSimple::new)
                 .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
     }
 

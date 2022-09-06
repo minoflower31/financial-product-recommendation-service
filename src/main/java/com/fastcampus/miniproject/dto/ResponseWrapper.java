@@ -32,5 +32,4 @@ public class ResponseWrapper<T>{
         this.status = NO_CONTENT.getReasonPhrase();
         return this;
     }
-
 }

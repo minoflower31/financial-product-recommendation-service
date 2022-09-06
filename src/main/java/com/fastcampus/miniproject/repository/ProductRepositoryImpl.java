@@ -1,6 +1,6 @@
 package com.fastcampus.miniproject.repository;
 
-import com.fastcampus.miniproject.dto.request.ProductSearchRequest;
+import com.fastcampus.miniproject.dto.request.ProductRequestDto;
 import com.fastcampus.miniproject.entity.AdditionalInfo;
 import com.fastcampus.miniproject.entity.Product;
 import com.fastcampus.miniproject.enums.Tag;
@@ -26,7 +26,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
      * 검색 조건이 없을 경우, 성능 최적화를 위해 table search 쿼리를 제대로 짜야함.
      */
     @Override
-    public List<Product> findBySearchCond(ProductSearchRequest condition) {
+    public List<Product> findBySearchCond(ProductRequestDto.ProductSearch condition) {
 
         return qf.selectFrom(product)
                 .where(

@@ -1,13 +1,14 @@
 package com.fastcampus.miniproject.controller;
 
 import com.fastcampus.miniproject.dto.ResponseWrapper;
-import com.fastcampus.miniproject.dto.request.JoinMemberRequest;
-import com.fastcampus.miniproject.dto.request.MemberRequestDto;
-import com.fastcampus.miniproject.dto.request.TokenRequestDto;
-import com.fastcampus.miniproject.dto.response.MemberAndTokenResponseDto;
+import com.fastcampus.miniproject.dto.request.UserRequestDto;
+import com.fastcampus.miniproject.dto.response.MemberResponseDto;
 import com.fastcampus.miniproject.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class AuthController {
      * @return 응답객체
      */
     @PostMapping("/join")
-    public ResponseWrapper<Void> join(@RequestBody JoinMemberRequest joinMemberRequest) {
+    public ResponseWrapper<Void> join(@RequestBody UserRequestDto.JoinMemberRequest joinMemberRequest) {
         authService.join(joinMemberRequest);
         return new ResponseWrapper<Void>().ok();
     }
@@ -44,14 +45,13 @@ public class AuthController {
      *         "password" :
      *     }
      * </pre>
-     * @param memberRequestDto 로그인 회원 정보 (email, password)
+     * @param login 로그인 회원 정보 (email, password)
      * @return 응답객체
      */
     @PostMapping("/login")
-    public ResponseWrapper<MemberAndTokenResponseDto> login(@RequestBody MemberRequestDto memberRequestDto) {
-        return new ResponseWrapper<>(authService.login(memberRequestDto)).ok();
+    public ResponseWrapper<MemberResponseDto.MemberAndToken> login(@RequestBody UserRequestDto.Login login) {
+        return new ResponseWrapper<>(authService.login(login)).ok();
     }
-
     /**
      * <p>인증 토큰 재발급 및 회원정보 </p>
      * <p>[input data]</p>
@@ -61,24 +61,28 @@ public class AuthController {
      *         "refreshToken" :
      *     }
      * </pre>
-     * @param tokenRequestDto (accessToken, refreshToken)
+     * @param token (accessToken, refreshToken)
      * @return 응답객체
      */
     @PostMapping("/reissue")
-    public ResponseWrapper<MemberAndTokenResponseDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return new ResponseWrapper<>(authService.reissue(tokenRequestDto)).ok();
+    public ResponseWrapper<MemberResponseDto.MemberAndToken> reissue(@RequestBody UserRequestDto.Token token ) {
+        return new ResponseWrapper<>(authService.reissue(token)).ok();
     }
 
     /**
      * <p> 로그아웃 기능 </p>
-     * <pre></pre>
-     * @param tokenRequestDto
+     * <pre>
+     *     {
+     *         "accessToken" :
+     *         "refreshToken" :
+     *     }
+     * </pre>
+     * @param token (accessToken, refreshToken)
      * @return
      */
-//    @PostMapping(value="/logout")
     @DeleteMapping("/logout")
-    public ResponseWrapper<Void> logout(@RequestBody TokenRequestDto tokenRequestDto) {
-        authService.logout(tokenRequestDto);
+    public ResponseWrapper<Void> logout(@RequestBody UserRequestDto.Token token) {
+        authService.logout(token);
         return new ResponseWrapper<Void>().ok();
     }
 }
