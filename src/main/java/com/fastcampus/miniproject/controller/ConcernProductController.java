@@ -6,6 +6,7 @@ import com.fastcampus.miniproject.dto.response.ProductResponse;
 import com.fastcampus.miniproject.dto.response.ProductSimpleResponse;
 import com.fastcampus.miniproject.service.ConcernProductService;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +26,24 @@ public class ConcernProductController {
 
     @PostMapping("/products/concern")
     @ApiOperation(value = "관심상품 등록", notes = "관심상품을 등록한다.")
-    public ResponseWrapper<ProductSimpleResponse> register(@RequestBody Long id) {
+    public ResponseWrapper<ProductSimpleResponse> register(@RequestBody ConcernProductRequest request) {
 
-        concernProductService.register(id, SecurityUtil.getCurrentMemberId());
+        concernProductService.register(request.getId(), SecurityUtil.getCurrentMemberId());
 
-        return new ResponseWrapper<>(concernProductService.findById(id)).ok();
+        return new ResponseWrapper<>(concernProductService.findById(request.getId())).ok();
 }
 
     @DeleteMapping("/products/concern")
     @ApiOperation(value = "관심상품 삭제", notes = "관심상품을 삭제한다.")
-    public ResponseWrapper<ProductSimpleResponse> delete(@RequestBody Long id){
-        concernProductService.delete(id, SecurityUtil.getCurrentMemberId());
+    public ResponseWrapper<ProductSimpleResponse> delete(@RequestBody ConcernProductRequest request){
+        concernProductService.delete(request.getId(), SecurityUtil.getCurrentMemberId());
 
-        return new ResponseWrapper<>(concernProductService.findById(id)).ok();
+        return new ResponseWrapper<>(concernProductService.findById(request.getId())).ok();
+    }
+
+    @Data
+    static class ConcernProductRequest {
+
+        private Long id;
     }
 }
