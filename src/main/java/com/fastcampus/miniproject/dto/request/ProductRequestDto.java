@@ -1,5 +1,6 @@
 package com.fastcampus.miniproject.dto.request;
 
+import com.fastcampus.miniproject.entity.ConcernProduct;
 import lombok.Data;
 
 import java.util.List;
@@ -15,4 +16,10 @@ public class ProductRequestDto {
             return query == null && tag == null && tagContent == null;
         }
     }
+
+    @Data
+    public static class ConcernProduct{
+        private Long id;
+    }
+
 }
