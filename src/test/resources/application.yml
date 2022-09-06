@@ -1,0 +1,9 @@
+jwt:
+  header: Authorization
+  secret: c2VjcmV0LWtleS1GYXN0Y2FtcHVzLW1pbmktcHJvamVjdC1Gcm9udGVuZC1CYWNrZW5kLXRlYW0tY29uYW4td2Utd2lsLWRvLWl0
+  token-validity-in-seconds: 86400
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
